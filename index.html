@@ -7,6 +7,11 @@
   <meta name="description" content="Instant client-side calculator for CAGR, SIP and lump-sum projections, and security versus bank FD comparisons.">
   <meta name="color-scheme" content="dark light">
   <meta name="theme-color" content="#0a1020">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Planner">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231d5fd1'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='700'%3E%E2%82%B9%3C/text%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/styles.css">
   <script>
@@ -211,5 +216,13 @@
   <script src="js/calc.js"></script>
   <script src="js/rates.js"></script>
   <script src="js/app.js"></script>
+  <script>
+    /* Offline support. Only on http(s): service workers do not exist on file:// pages. */
+    if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('sw.js').catch(function () { /* app still works without it */ });
+      });
+    }
+  </script>
 </body>
 </html>
