@@ -1,0 +1,11 @@
+{
+  "asOf": "2026-10-12",
+  "note": "SBI FD rows are SBI general-public domestic card rates as shown on BankBazaar (page updated 12 Oct 2026, rates stated as effective from 15 Dec 2025). The savings-account row is an unverified placeholder. Banks revise rates often, so confirm with the bank before quoting a client.",
+  "items": [
+    { "id": "savings", "label": "Savings account (typical)", "rate": 2.7, "verified": false },
+    { "id": "sbi1", "label": "SBI FD, 1 yr", "rate": 6.25, "verified": true },
+    { "id": "sbi2", "label": "SBI FD, 2 yrs", "rate": 6.4, "verified": true },
+    { "id": "sbi3", "label": "SBI FD, 3 yrs", "rate": 6.3, "verified": true },
+    { "id": "sbi5", "label": "SBI FD, 5 yrs", "rate": 6.05, "verified": true }
+  ]
+}

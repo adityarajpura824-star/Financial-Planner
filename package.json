@@ -1,0 +1,10 @@
+{
+  "name": "financial-planner",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Instant client-side calculator for live financial planning consultations.",
+  "scripts": {
+    "test": "node --test",
+    "start": "npx --yes serve ."
+  }
+}
