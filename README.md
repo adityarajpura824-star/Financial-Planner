@@ -36,6 +36,24 @@ CLI alternative: `npx vercel --prod` from this folder.
 
 **GitHub Pages**: Settings → Pages → Deploy from branch → `main` / root.
 
+## Install it on a phone
+
+There are two ways, and you can use either or both.
+
+**1. As a web app (no APK).** Deploy it first (above), then open the site's address on the phone:
+- **Android (Chrome):** menu `⋮` → **Install app** (or *Add to Home screen*).
+- **iPhone (Safari):** Share → **Add to Home Screen**.
+
+It then has its own icon, opens full screen, and works offline. Updates arrive by themselves the next time it is opened with a connection.
+
+**2. As an Android APK, like a normal app.** The **Build Android APK** workflow (`.github/workflows/build-apk.yml`) builds it on every push to `main`, or on demand from the **Actions** tab (*Run workflow*). Get the file from either place:
+- **Releases → `apk-latest` → `FinancialPlanner.apk`**: a fixed link you can open straight on the phone: <https://github.com/adityarajpura824-star/Financial-Planner/releases/tag/apk-latest>
+- **Actions → the latest run → Artifacts** (a zip containing the same APK).
+
+Open the file on the phone and allow *Install unknown apps* for the browser or file manager when asked. The APK is debug-signed, which is fine for your own devices but not for the Play Store.
+
+The APK carries its own copy of the app, including `data/rates.json` as it was at build time, so a rate change in the repo reaches the APK only after the next build and reinstall. Rates edited inside the app stay on the device either way.
+
 ## Keeping bank rates current
 
 Benchmarks live in [`data/rates.json`](data/rates.json). Edit the numbers, commit and push, and the deployed app picks them up on the next load. Inside the app, **Bank benchmarks** lets the planner override any rate on that device mid-meeting, and **Use** copies a rate into the FD field.
@@ -70,7 +88,13 @@ js/rates.js       bank benchmark rates with offline fallback
 js/app.js         inputs, rendering, chart, persistence
 data/rates.json   bank benchmark rates
 tests/            engine tests
+sw.js             offline support (service worker)
+manifest.webmanifest, icons/   what makes it installable as a web app
+capacitor.config.json, android/, scripts/build-web.js, assets/   the Android APK wrapper (Capacitor) and its icon sources
+.github/workflows/build-apk.yml   builds the APK in the cloud
 ```
+
+To build the APK on your own machine instead, install Android Studio, then `npm install`, `npm run apk:sync` and `npx cap open android`. The web app itself never needs a build step.
 
 Inputs are remembered in the browser (`localStorage`) between visits, per device. **Reset** clears them to the defaults.
 

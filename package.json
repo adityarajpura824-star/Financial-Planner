@@ -5,6 +5,13 @@
   "description": "Instant client-side calculator for live financial planning consultations.",
   "scripts": {
     "test": "node --test",
-    "start": "npx --yes serve ."
+    "start": "npx --yes serve .",
+    "build:web": "node scripts/build-web.js",
+    "apk:sync": "npm run build:web && cap sync android"
+  },
+  "devDependencies": {
+    "@capacitor/android": "^8.6.0",
+    "@capacitor/cli": "^8.6.0",
+    "@capacitor/core": "^8.6.0"
   }
 }

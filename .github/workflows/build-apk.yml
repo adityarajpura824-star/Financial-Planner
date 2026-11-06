@@ -1,0 +1,68 @@
+name: Build Android APK
+
+# Builds an installable APK of the app. Runs on every push to main, or on demand from the Actions tab.
+# Download: Actions tab > the run > Artifacts, or the fixed link under Releases (tag "apk-latest").
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write # needed to attach the APK to the "apk-latest" release
+
+concurrency:
+  group: apk-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Install, test, and bundle the web app into the Android project
+        run: |
+          npm ci
+          npm test
+          npm run build:web
+          npx cap sync android
+
+      - name: Install Android SDK platform 36
+        run: |
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36"
+
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
+
+      - name: Name the APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk FinancialPlanner.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: FinancialPlanner-apk
+          path: FinancialPlanner.apk
+
+      - name: Publish the APK to a fixed download link
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view apk-latest >/dev/null 2>&1 || gh release create apk-latest \
+            --title "Android APK (latest build)" \
+            --notes "Debug-signed APK of the latest build. Open this page on your phone, download FinancialPlanner.apk and install it." \
+            --latest=false
+          gh release upload apk-latest FinancialPlanner.apk --clobber
